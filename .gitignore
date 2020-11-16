@@ -1,0 +1,9 @@
+/venv/
+/apikey
+/sites.pkl.old.old
+/portData.csv
+/portData.pkl
+/sorted_data_sample.csv
+/meraki_logs/
+/logs/
+/excel/
