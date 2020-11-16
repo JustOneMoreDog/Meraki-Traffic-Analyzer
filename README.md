@@ -37,14 +37,11 @@ I did all of my testing on an Ubuntu 20.04 VM on a Dell PowerEdge R330 with an I
         - If you are passing in a CSV then you need to make sure you have the following columns
         - These columns do not need to be in the same order but they do need to exist
 	        - Note: Application is the only optional column. Making a best guess at the application being used was a feature that did not make the initial release. If I have time in the future I will add it in. Most of the code is there but  I ran out of time to test it so it was omitted.
-        
-|  | Source address | Destination address | Destination Port | IP Protocol | Receive Time | Application |
-|--|--|--|--|--|--|--|--|
-| Example | 192.168.5.50 | 192.168.6.60 | 80 | TCP | 2020/10/05 02:07:40 | web-browsing | 
-```
-Receive Time,Source address,Destination address,Destination Port,Application,IP Protocol
-2020/10/05 02:07:40,10.1.1.73,63.251.228.101,123,ntp,udp
-```
+	```
+	Receive Time,Source address,Destination address,Destination Port,Application,IP Protocol
+	2020/10/05 02:07:40,10.1.1.73,63.251.228.101,123,ntp,udp
+	``` 
+
      
 ## Example Usage
 ```
