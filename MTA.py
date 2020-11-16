@@ -423,7 +423,7 @@ def get_ip_data(row, sites, discovered):
 
     # First thing that we need to handle are the public IP-es
     # (addr.dst notin 10.0.0.0/8) OR (addr.dst notin 172.16.0.0/12) OR (addr.dst notin 192.168.0.0/16)
-    if not srcDone and not srcData['srcIp'].is_private() and row['DstIP'] not in IPNetwork('10.160.0.0/21'):
+    if not srcDone and not srcData['srcIp'].is_private():
         srcData['srcSite'] = 'Internet'
         srcData['srcLocation'] = 'None'
         srcData['srcVlanId'] = 'None'
@@ -432,7 +432,7 @@ def get_ip_data(row, sites, discovered):
         srcData['srcVlanSubnet'] = IPNetwork('6.6.6.6/6')
         srcData['srcVlanLocation'] = 'None'
         srcDone = True
-    if not dstDone and not dstData['dstIp'].is_private() and row['SrcIP'] not in IPNetwork('10.160.0.0/21'):
+    if not dstDone and not dstData['dstIp'].is_private():
         dstData['dstSite'] = 'Internet'
         dstData['dstLocation'] = 'None'
         dstData['dstVlanId'] = 'None'
@@ -743,10 +743,12 @@ def get_rule_list_impact(source, destination, ruleList):
     return None, None
 
 
-def format_df_values_caller(chunk):
+def format_df_values_caller(chunk, networks=None):
     # We have to make this array like this because of how pandas .isin function works
-    ipes = [str(ip) for ip in
-            list(IPNetwork('10.161.0.0/22')) + list(IPNetwork('10.162.16.0/23')) + list(IPNetwork('10.168.0.0/21'))]
+    if ipes is not None:
+        ipes = [str(ip) for network in networks for ip in list(network)]
+    else:
+        ipes = []
     return format_df_values(chunk, ipes)
 
 
@@ -830,6 +832,7 @@ def resolve_ip(row, discovered, servers):
 
 
 # This is where the true magic happens. Without this function, our program would take literally forever to finish
+# In the next version I will add support for **kwargs so that we can bypass the need to have these "caller" functions. Itll also give us a lot more features
 def parallelize_workload(data, function, n_cores):
     printv("%s is being called with %d cores" % (function.__name__, n_cores))
 
@@ -1086,7 +1089,9 @@ def get_sites(dashboard, organizationId, networks, get_clients=False):
     return sites
 
 
-def enrich_traffic_data(filename, columns, pretty=False, DNS=False):
+# excempt_ipes is variable that will get added in the next version. If you have hosts in your network that you are well aware of, like Naigos or Splunk, 
+# that make a lot of noise, you can filter them out automatically with this variable
+def enrich_traffic_data(filename, columns, pretty=False, DNS=False, excempt_ipes=[]):
     ttic = time.perf_counter()
     columnMap = {
         'Receive Time': 'Timestamp',
@@ -1112,8 +1117,6 @@ def enrich_traffic_data(filename, columns, pretty=False, DNS=False):
     trafficDataFrame.dropna(how='all', inplace=True)
     trafficDataFrame = trafficDataFrame[trafficDataFrame['SrcIP'].notna()]
     trafficDataFrame = trafficDataFrame[trafficDataFrame['DstIP'].notna()]
-    trafficDataFrame = trafficDataFrame[trafficDataFrame['DstIP'] != '192.168.16.231']
-    trafficDataFrame = trafficDataFrame[trafficDataFrame['SrcIP'] != '192.168.16.231']
     toc = time.perf_counter()
     printv(f"Loading and formatting dataset took {toc - tic:0.4f} seconds to process")
     printv("Current length dataset is %d" % len(trafficDataFrame))
