@@ -12,6 +12,7 @@ Performing in-depth traffic analysis with the Meraki Dashboard API
 	* [PCAP](#Setup)
 	* [CSV](#Setup)
 * [Example Usage](#Example-Usage)
+* [Excel File Details](#Excel-File-Details)
 
 ## Summary
 This script will take in a PCAP or CSV and output an enriched CSV and formatted Excel file. It will look at each traffic log entry and or packet, and with the help of the Dashboard API, give you the VLAN information for the IP addresses, the location of the IP addresses on your Meraki network, if and which ACL/FW/VPN rules are applying to the IP addresses, and optionally, a DNS query on the IP addresses. 
@@ -237,3 +238,5 @@ VERBOSE: Adding sheets to our document
 Working with VLAN 10.20.20.0/24: : 100%|██████████████████████████████████████████████████████████████████| 69/69 [00:00<00:00, 89.34it/s]
 VERBOSE: Done
 ```
+
+## Excel File Details
