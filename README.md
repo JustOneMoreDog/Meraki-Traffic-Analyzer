@@ -36,6 +36,7 @@ python3 MTA.py -v -f your_pcap_data.csv --PrintTopData
 ## Summary
 This script will take in a PCAP or CSV and output an enriched CSV and formatted Excel file. It will look at each traffic log entry and or packet, and with the help of the Dashboard API, give you the VLAN information for the IP addresses, the location of the IP addresses on your Meraki network, if and which ACL/FW/VPN rules are applying to the IP addresses, and optionally, a DNS query on the IP addresses. 
 In Meraki you have 3 places where you can define the flow of network traffic; Switch ACL, Appliance Firewall, and Appliance Site-to-Site VPN Firewall. I was recently tasked with locking down these lists and this script is a result of that project. I used a Palo Alto to setup mirrors all over the network and collect data. This script ingests those traffic logs and then spits out enriched CSV and Excel files for further analysis. I have also setup this script to handle PCAP files that you would get if you did a packet capture from the Dashboard.  
+
 To learn more about the `sites` variable that is used throughout this script, see my [Meraki Dashboard API Script Starter](https://github.com/picnicsecurity/Meraki-Dashboard-API-Script-Starter) repository.
 
 ##  Speed
