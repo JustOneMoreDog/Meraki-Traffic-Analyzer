@@ -429,7 +429,7 @@ def get_ip_data(row, sites, discovered):
         srcData['srcVlanId'] = 'None'
         srcData['srcVlanName'] = 'None'
         # For when we build out our firewall rules we will use this IPNetwork to define the internet
-        srcData['srcVlanSubnet'] = IPNetwork('6.6.6.6/6')
+        srcData['srcVlanSubnet'] = IPNetwork('6.6.6.6/32')
         srcData['srcVlanLocation'] = 'None'
         srcDone = True
     if not dstDone and not dstData['dstIp'].is_private():
@@ -438,7 +438,7 @@ def get_ip_data(row, sites, discovered):
         dstData['dstVlanId'] = 'None'
         dstData['dstVlanName'] = 'Internet'
         # For when we build out our firewall rules we will use this IPNetwork to define the internet
-        dstData['dstVlanSubnet'] = IPNetwork('6.6.6.6/6')
+        dstData['dstVlanSubnet'] = IPNetwork('6.6.6.6/32')
         dstData['dstVlanLocation'] = 'None'
         dstDone = True
 
@@ -751,7 +751,7 @@ def format_df_values_caller(chunk, networks=None):
         ipes = []
     return format_df_values(chunk, ipes)
 
-
+# See https://github.com/picnicsecurity/Meraki-Traffic-Analyzer#Tailoring-the-Code for an explaination on this code and its purpose
 def format_df_values(chunk, ipes):
     col = 'SrcIP'
     # Look...dont judge. This is just something you are going to have to accept and move on
