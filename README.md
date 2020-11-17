@@ -52,133 +52,154 @@ usage: MTA.py [-h] -f TRAFFICDATA [-v] [--apikey APIKEY] [--reloadSites] [--relo
 ```
 Running this script fresh as if you had just pulled it down. Note that the first run will take the longest since it will require the sites data to be collected. The rate limit on the Dashboard API inhibits our ability to speed this up hence why we Pickle the data after we get it.
 ```
-adam@WDC-PYCHARM-01:~/PycharmProjects/Meraki-Traffic-Analyzer$ python3 MTA.py -f new_sorted_data.csv -v --resolveDNS --DNSServers 10.10.10.10,10.10.10.11                                                                       
-VERBOSE: Checking the CSV for the proper columns                                                         
-VERBOSE: Gathering Meraki variables                                                                      
-VERBOSE: Meraki variables set                                                                            
-VERBOSE: No pickled site data found                                                                      
-VERBOSE: Generating data for PicnicSecurity sites                                                   
---------------------------------------------------------------------------------------------------------------------------------------------                                                                       
+adam@WDC-PYCHARM-01:~/PycharmProjects/Meraki-Traffic-Analyzer$ python3 MTA.py -f sorted_data_sample.csv -v --resolveDNS --DNSServers 10.10.10.10,10.10.10.20                                                                   
+VERBOSE: Checking the CSV for the proper columns                                  
+VERBOSE: Gathering Meraki variables                                               
+VERBOSE: Meraki variables set                                                     
+VERBOSE: No pickled site data found                                               
+VERBOSE: Generating data for Museum of the Bible sites                            
+--------------------------------------------------------------------------------------------------------------                                                       
 
-VERBOSE: Gathering identifiers                                                                           
-VERBOSE: Gathering VPN data                                                                              
-VERBOSE: Gathering VPN data took 2.2054 seconds to process                                               
-VERBOSE: Gathering VLAN data from switch stacks                                                          
-VERBOSE: Gathering VLAN data from switches                                                               
-VERBOSE: Gathering devices took 0.5720 seconds to process                                                
-VERBOSE: Gathering VLAN data from MX security appliances                                                 
-VERBOSE: Gathering VLAN data took 9.4498 seconds to process                                              
-VERBOSE: Consolidating site's subnets into CIDR list                                                     
-VERBOSE: Gathering client data from the site's devices                                                   
-VERBOSE: Gathering device client data took 43.0276 seconds to process                                    
-VERBOSE: Gathering a sample of the network client data                                                   
-VERBOSE: Gathering network client data took 2.0893 seconds to process                                    
-VERBOSE: Gathering MS ACL and MX Firewall data                                                           
-VERBOSE: Gathering ACL rules on the MS switches                                                          
-VERBOSE: Gathering Firewalls rules on the MX appliances                                                  
-VERBOSE: Gathering ACL and FW data took 0.7532 seconds to process                                        
-VERBOSE: Creating site dictionary                                                                        
-============================================================================================================================================                                                                       
-Processing CA: 100%|█████████████████████████████████████████████████████████████████████████████████████| 100/100 [00:57<00:00,  1.74it/s]                                                                       
---------------------------------------------------------------------------------------------------------------------------------------------                                                                       
-VERBOSE: Gathering identifiers                                                                           
-VERBOSE: Gathering VPN data                                                                              
-VERBOSE: Gathering VPN data took 0.7347 seconds to process                                               
-VERBOSE: Gathering VLAN data from switch stacks                                                          
-VERBOSE: Gathering VLAN data from switches                                                               
-VERBOSE: Gathering devices took 1.4861 seconds to process                                                
-VERBOSE: Gathering VLAN data from MX security appliances                                                 
-VERBOSE: Gathering VLAN data took 30.6100 seconds to process                                             
-VERBOSE: Consolidating site's subnets into CIDR list                                                     
-VERBOSE: Gathering client data from the site's devices                                                   
-VERBOSE: Gathering device client data took 640.4964 seconds to process                                   
-VERBOSE: Gathering a sample of the network client data                                                   
-VERBOSE: Gathering network client data took 15.9908 seconds to process                                   
-VERBOSE: Gathering MS ACL and MX Firewall data                                                           
-VERBOSE: Gathering ACL rules on the MS switches                                                          
-VERBOSE: Gathering Firewalls rules on the MX appliances                                                  
-VERBOSE: Gathering ACL and FW data took 0.9378 seconds to process                                        
-VERBOSE: Creating site dictionary                                                                        
-============================================================================================================================================                                                                       
-Processing MD: 100%|█████████████████████████████████████████████████████████████████████████████████████| 100/100 [11:28<00:00,  6.89s/it]                                                                       
---------------------------------------------------------------------------------------------------------------------------------------------                                                                       
-VERBOSE: Gathering identifiers                                                                           
-VERBOSE: Gathering VPN data                                                                              
-VERBOSE: Gathering VPN data took 0.7646 seconds to process                                               
-VERBOSE: Gathering VLAN data from switch stacks                                                          
-VERBOSE: No switch stacks in this network                                                                
-VERBOSE: Gathering VLAN data from switches                                                               
-VERBOSE: Gathering devices took 0.4190 seconds to process                                                
-VERBOSE: Gathering VLAN data from MX security appliances                                                 
-VERBOSE: No VLANs exist on security appliance and or no security appliance exists                        
-VERBOSE: Gathering VLAN data took 170.8584 seconds to process                                            
-VERBOSE: Consolidating site's subnets into CIDR list                                                     
-VERBOSE: Gathering client data from the site's devices                                                   
-VERBOSE: Gathering device client data took 0.0004 seconds to process                                     
-VERBOSE: Gathering a sample of the network client data                                                   
-VERBOSE: Gathering network client data took 1.1509 seconds to process                                    
-VERBOSE: Gathering MS ACL and MX Firewall data                                                           
-VERBOSE: Gathering ACL rules on the MS switches                                                          
-VERBOSE: Gathering Firewalls rules on the MX appliances                                                  
-VERBOSE: Gathering ACL and FW data took 98.6410 seconds to process                                       
-VERBOSE: Creating site dictionary                                                                        
-============================================================================================================================================                                                                       
-Processing AWS: 100%|█████████████████████████████████████████████████████████████████████████████████████| 100/100 [04:31<00:00,  2.71s/it]                                                                       
---------------------------------------------------------------------------------------------------------------------------------------------                                                                                                                                             
-VERBOSE: Gathering all the preflight information took 975.6765 seconds to process    
-                                                                                                                             
---------------------------------------------------------------------------------------------------------------------------------------------                                                                       
---------------------------------------------------------------------------------------------------------------------------------------------                                                                       
-VERBOSE: Sending traffic flow data through the enrichnator                                               
---------------------------------------------------------------------------------------------------------------------------------------------                                                                       
---------------------------------------------------------------------------------------------------------------------------------------------                                                                       
-VERBOSE: Current length dataset is 23368590                                                              
-VERBOSE: Loading and formatting dataset took 26.9496 seconds to process                                                                                                                                            
-VERBOSE: Current length dataset is 20045853                                                              
-VERBOSE: Initial Dataframe Memory Usage                                                                  
-VERBOSE: 6525.3231 mb                                                                                    
-VERBOSE: Formatting the IP Section                                                                       
-VERBOSE: Length of all the IPes 40091706                                                                 
-VERBOSE: format_df_values_caller is being called with 7 cores                                            
-Parallel Workload Status: 100%|███████████████████████████████████████████████████████████████████████████████| 9/9 [01:24<00:00,  9.42s/it]                                                                       
-VERBOSE: Formatting the IPes took 85.4713 seconds to process                                             
-VERBOSE: Formatting the dataset took 87.5870 seconds to process                                          
-VERBOSE: Traffic DataFrame memory usage before duplicates are grouped (n=17182160)                                                                                                                                 
-VERBOSE: 3211.6922 mb                                                                                    
-VERBOSE: Grouping the dataset took 124.7111 seconds to process                                           
-VERBOSE: Duplicates Grouped (n=131899)                                                                   
-VERBOSE: 15.0948 mb                                                                                      
-VERBOSE: Sorting the dataset by count (n=131899)                                                         
-VERBOSE: Sorting the dataset took 0.0146 seconds to process                                              
-VERBOSE: Setting the multiprocessing speed to 6                                                          
-VERBOSE: get_ip_data_caller is being called with 6 cores                                                 
-Parallel Workload Status: 100%|███████████████████████████████████████████████████████████████████████████████| 8/8 [01:15<00:00,  9.44s/it]                                                                       
-VERBOSE: Getting IP Data took 75.6135 seconds to process                                                 
-VERBOSE: IP Data has been fleshed out. Moving on to traffic flow rules                                                                                                                                             
-VERBOSE: Setting the multiprocessing speed to 6                                                          
-VERBOSE: get_packet_path_data_caller is being called with 6 cores                                        
-Parallel Workload Status: 100%|███████████████████████████████████████████████████████████████████████████████| 8/8 [00:22<00:00,  2.77s/it]                                                                       
-VERBOSE: Getting Traffic Flow Data Parallel took 22.2112 seconds to process                                                                                                                                        
-VERBOSE: Starting DNS Queries                                                                            
-VERBOSE: resolve_ip_caller is being called with 10 cores                                                 
-Parallel Workload Status: 100%|█████████████████████████████████████████████████████████████████████████████| 12/12 [07:03<00:00, 35.27s/it]                                                                       
-VERBOSE: Getting DNS information took 426.5149 seconds to process                                        
-VERBOSE: Enrichment process finished                                                                     
-VERBOSE: --- --- --- --- ---                                                                             
-VERBOSE: Dataset took 774.6598 seconds to process                                                        
-VERBOSE: --- --- --- --- ---                                                                             
---------------------------------------------------------------------------------------------------------------------------------------------                                                                       
+VERBOSE: Gathering identifiers                                                    
+VERBOSE: Gathering VPN data                                                       
+VERBOSE: Gathering VPN data took 0.9180 seconds to process                        
+VERBOSE: Gathering VLAN data from switch stacks                                   
+VERBOSE: Gathering VLAN data from switches                                        
+VERBOSE: Gathering devices took 0.5001 seconds to process                         
+VERBOSE: Gathering VLAN data from MX security appliances                          
+VERBOSE: Gathering VLAN data took 7.1896 seconds to process                       
+VERBOSE: Consolidating site's subnets into CIDR list                              
+VERBOSE: Gathering client data from the site's devices                            
+VERBOSE: Gathering device client data took 33.1416 seconds to process             
+VERBOSE: Gathering a sample of the network client data                            
+VERBOSE: Gathering network client data took 2.1380 seconds to process             
+VERBOSE: Gathering MS ACL and MX Firewall data                                    
+VERBOSE: Gathering ACL rules on the MS switches                                   
+VERBOSE: Gathering Firewalls rules on the MX appliances                           
+VERBOSE: Gathering ACL and FW data took 0.7610 seconds to process                 
+VERBOSE: Creating site dictionary                                                 
+==============================================================================================================                                                       
+Processing OKC: 100%|███████████████████████████████████████████████████████| 100/100 [00:44<00:00,  2.26it/s]                                                       
+--------------------------------------------------------------------------------------------------------------                                                       
+VERBOSE: Gathering identifiers                                                    
+VERBOSE: Gathering VPN data                                                       
+VERBOSE: Gathering VPN data took 0.9970 seconds to process                        
+VERBOSE: Gathering VLAN data from switch stacks                                   
+VERBOSE: Gathering VLAN data from switches                                        
+VERBOSE: Gathering devices took 2.0811 seconds to process                         
+VERBOSE: Gathering VLAN data from MX security appliances                          
+VERBOSE: Gathering VLAN data took 27.2023 seconds to process                      
+VERBOSE: Consolidating site's subnets into CIDR list                              
+VERBOSE: Gathering client data from the site's devices                            
+VERBOSE: Gathering device client data took 638.7474 seconds to process            
+VERBOSE: Gathering a sample of the network client data                            
+VERBOSE: Gathering network client data took 15.3696 seconds to process            
+VERBOSE: Gathering MS ACL and MX Firewall data                                    
+VERBOSE: Gathering ACL rules on the MS switches                                   
+VERBOSE: Gathering Firewalls rules on the MX appliances                           
+VERBOSE: Gathering ACL and FW data took 1.1641 seconds to process                 
+VERBOSE: Creating site dictionary                                                 
+==============================================================================================================                                                       
+Processing WDC: 100%|███████████████████████████████████████████████████████| 100/100 [11:23<00:00,  6.83s/it]                                                       
+--------------------------------------------------------------------------------------------------------------                                                       
+VERBOSE: Gathering identifiers                                                    
+VERBOSE: Gathering VPN data                                                       
+VERBOSE: Gathering VPN data took 0.9799 seconds to process                        
+VERBOSE: Gathering VLAN data from switch stacks                                   
+VERBOSE: No switch stacks in this network                                         
+VERBOSE: Gathering VLAN data from switches                                        
+VERBOSE: Gathering devices took 0.4579 seconds to process                         
+VERBOSE: Gathering VLAN data from MX security appliances                          
+VERBOSE: No VLANs exist on security appliance and or no security appliance exists 
+VERBOSE: Gathering VLAN data took 177.3842 seconds to process                     
+VERBOSE: Consolidating site's subnets into CIDR list                              
+VERBOSE: Gathering client data from the site's devices                            
+VERBOSE: Gathering device client data took 0.0003 seconds to process              
+VERBOSE: Gathering a sample of the network client data                            
+VERBOSE: Gathering network client data took 0.3985 seconds to process             
+VERBOSE: Gathering MS ACL and MX Firewall data                                    
+VERBOSE: Gathering ACL rules on the MS switches                                   
+VERBOSE: Gathering Firewalls rules on the MX appliances                           
+VERBOSE: Gathering ACL and FW data took 138.3256 seconds to process               
+VERBOSE: Creating site dictionary                                                 
+==============================================================================================================                                                       
+Processing AWS: 100%|███████████████████████████████████████████████████████| 100/100 [05:17<00:00,  3.17s/it]                                                       
+--------------------------------------------------------------------------------------------------------------                                                       
+VERBOSE: Gathering identifiers                                                    
+VERBOSE: Gathering VPN data                                                       
+VERBOSE: Gathering VPN data took 0.6744 seconds to process                        
+VERBOSE: Gathering VLAN data from switch stacks                                   
+VERBOSE: No switch stacks in this network                                         
+VERBOSE: Gathering VLAN data from switches                                        
+VERBOSE: Gathering devices took 0.3191 seconds to process                         
+VERBOSE: Gathering VLAN data from MX security appliances                          
+VERBOSE: No VLANs exist on security appliance and or no security appliance exists 
+VERBOSE: Gathering VLAN data took 187.8790 seconds to process                     
+VERBOSE: Consolidating site's subnets into CIDR list                              
+VERBOSE: Gathering client data from the site's devices                            
+VERBOSE: Gathering device client data took 0.0003 seconds to process              
+VERBOSE: Gathering a sample of the network client data                            
+VERBOSE: Gathering network client data took 0.4057 seconds to process             
+VERBOSE: Gathering MS ACL and MX Firewall data                                    
+VERBOSE: Gathering ACL rules on the MS switches                                   
+VERBOSE: Gathering Firewalls rules on the MX appliances                           
+VERBOSE: Gathering ACL and FW data took 95.4927 seconds to process                
+VERBOSE: Creating site dictionary                                                 
+==============================================================================================================                                                       
+Processing Z3: 100%|████████████████████████████████████████████████████████| 100/100 [04:44<00:00,  2.84s/it]                                                       
+--------------------------------------------------------------------------------------------------------------                                                       
 
-VERBOSE: Building Excel documents for the report                                                         
-VERBOSE: Flattening dataset (n=131899)                                                                   
-VERBOSE: Flattening dataset took 0.1944 seconds to process                                               
-VERBOSE: Performing extra steps                                                                          
-VERBOSE: Excel document made: /home/adam/PycharmProjects/Meraki-Traffic-Analyzer/excel/new_sorted_data_1605553612.xlsx                                                                                             
-VERBOSE: Adding sheets to our document                                                                   
-Working with VLAN 10.20.20.1/24: : 100%|██████████████████████████████████████████████████████████████████| 81/81 [00:12<00:00,  6.56it/s]                                                                       
-VERBOSE: Done                                                                                            
-adam@WDC-PYCHARM-01:~/PycharmProjects/Meraki-Traffic-Analyzer$ 
+VERBOSE: Gathering all the preflight information took 1331.7198 seconds to process                                                                                   
+--------------------------------------------------------------------------------------------------------------                                                       
+--------------------------------------------------------------------------------------------------------------                                                       
+VERBOSE: Sending traffic flow data through the enrichnator                                                                                                           
+--------------------------------------------------------------------------------------------------------------                                                       
+--------------------------------------------------------------------------------------------------------------                                                       
+VERBOSE: Current length dataset is 10000                                          
+VERBOSE: Loading and formatting dataset took 0.0211 seconds to process                                                                                               
+VERBOSE: Current length dataset is 8364                                           
+VERBOSE: Initial Dataframe Memory Usage                                           
+VERBOSE: 2.3095 mb                                                                
+VERBOSE: Formatting the IP Section                                                
+VERBOSE: Length of all the IPes 16728                                             
+VERBOSE: format_df_values_caller is being called with 4 cores                                                                                                        
+Parallel Workload Status: 100%|█████████████████████████████████████████████████| 6/6 [00:00<00:00, 73.14it/s]                                                       
+VERBOSE: Formatting the IPes took 0.0831 seconds to process                                                                                                          
+VERBOSE: Formatting the dataset took 0.0836 seconds to process                                                                                                       
+VERBOSE: Traffic DataFrame memory usage before duplicates are grouped (n=8364)                                                                                       
+VERBOSE: 1.5634 mb                                                                
+VERBOSE: Grouping the dataset took 0.0974 seconds to process                                                                                                         
+VERBOSE: Duplicates Grouped (n=2963)                                              
+VERBOSE: 0.3392 mb                                                                
+VERBOSE: Sorting the dataset by count (n=2963)                                    
+VERBOSE: Sorting the dataset took 0.0005 seconds to process                                                                                                          
+VERBOSE: Setting the multiprocessing speed to 4                                   
+VERBOSE: get_ip_data_caller is being called with 4 cores                                                                                                             
+Parallel Workload Status: 100%|█████████████████████████████████████████████████| 6/6 [00:10<00:00,  1.80s/it]                                                       
+VERBOSE: Getting IP Data took 10.7815 seconds to process                                                                                                             
+VERBOSE: IP Data has been fleshed out. Moving on to traffic flow rules                                                                                               
+VERBOSE: Setting the multiprocessing speed to 4                                   
+VERBOSE: get_packet_path_data_caller is being called with 4 cores                                                                                                    
+Parallel Workload Status: 100%|█████████████████████████████████████████████████| 6/6 [00:00<00:00, 10.56it/s]                                                       
+VERBOSE: Getting Traffic Flow Data Parallel took 0.5701 seconds to process                                                                                           
+VERBOSE: Starting DNS Queries                                                     
+VERBOSE: resolve_ip_caller is being called with 10 cores                                                                                                             
+Parallel Workload Status: 100%|███████████████████████████████████████████████| 12/12 [00:19<00:00,  1.66s/it]                                                       
+VERBOSE: Getting DNS information took 19.9505 seconds to process                                                                                                     
+VERBOSE: Enrichment process finished                                              
+VERBOSE: --- --- --- --- ---                                                      
+VERBOSE: Dataset took 31.5533 seconds to process                                  
+VERBOSE: --- --- --- --- ---                                                      
+--------------------------------------------------------------------------------------------------------------                                                       
 
+VERBOSE: Building Excel documents for the report                                  
+VERBOSE: Flattening dataset (n=2963)                                              
+VERBOSE: Flattening dataset took 0.0122 seconds to process                                                                                                           
+VERBOSE: Performing extra steps                                                   
+VERBOSE: Excel document made: /home/adam/PycharmProjects/Meraki-Traffic-Analyzer/excel/sorted_data_sample_1605556860.xlsx                                            
+VERBOSE: Adding sheets to our document                                            
+Working with VLAN 10.10.20.0/24: : 100%|████████████████████████████████████| 68/68 [00:00<00:00, 88.79it/s]                                                       
+VERBOSE: Done                                                                     
 ```
 Now that the sites data has been Pickled we can call the script again and the preflight will only take a few seconds
 ```
