@@ -45,11 +45,13 @@ I did all of my testing on an Ubuntu 20.04 VM on a Dell PowerEdge R330 with an I
 
      
 ## Example Usage
+### Arguments 
 ```
 python3 MTA.py                                        
 usage: MTA.py [-h] -f TRAFFICDATA [-v] [--apikey APIKEY] [--reloadSites] [--reloadClients] [--resolveDNS]
               [--DNSServers DNSSERVERS] [--PrintTopData]
 ```
+### First Run
 Running this script fresh as if you had just pulled it down. Note that the first run will take the longest since it will require the sites data to be collected. The rate limit on the Dashboard API inhibits our ability to speed this up hence why we Pickle the data after we get it.
 ```
 adam@WDC-PYCHARM-01:~/PycharmProjects/Meraki-Traffic-Analyzer$ python3 MTA.py -f sorted_data_sample.csv -v --resolveDNS --DNSServers 10.10.10.10,10.10.10.20                                                                   
@@ -178,9 +180,10 @@ VERBOSE: Adding sheets to our document
 Working with VLAN 10.10.20.0/24: : 100%|████████████████████████████████████| 68/68 [00:00<00:00, 88.79it/s]                                                       
 VERBOSE: Done                                                                     
 ```
+### Using CSV
 Now that the sites data has been Pickled we can call the script again and the preflight will only take a few seconds
 ```
-adam@WDC-PYCHARM-01:~/PycharmProjects/Meraki-Traffic-Analyzer$ python3 MTA.py -f sorted_data_sample.csv -v --resolveDNS --DNSServers 10.160.34.249,10.160.34.250
+adam@WDC-PYCHARM-01:~/PycharmProjects/Meraki-Traffic-Analyzer$ python3 MTA.py -f sorted_data_sample.csv -v --resolveDNS --DNSServers 10.10.10.10,10.10.10.20
 VERBOSE: Checking the CSV for the proper columns
 VERBOSE: Gathering Meraki variables
 VERBOSE: Meraki variables set
