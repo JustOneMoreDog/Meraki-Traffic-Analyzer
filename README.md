@@ -57,7 +57,7 @@ VERBOSE: Checking the CSV for the proper columns
 VERBOSE: Gathering Meraki variables                                               
 VERBOSE: Meraki variables set                                                     
 VERBOSE: No pickled site data found                                               
-VERBOSE: Generating data for Museum of the Bible sites                            
+VERBOSE: Generating data for PicnicSecurity sites                            
 --------------------------------------------------------------------------------------------------------------                                                       
 
 VERBOSE: Gathering identifiers                                                    
@@ -79,7 +79,7 @@ VERBOSE: Gathering Firewalls rules on the MX appliances
 VERBOSE: Gathering ACL and FW data took 0.7610 seconds to process                 
 VERBOSE: Creating site dictionary                                                 
 ==============================================================================================================                                                       
-Processing OKC: 100%|███████████████████████████████████████████████████████| 100/100 [00:44<00:00,  2.26it/s]                                                       
+Processing CA: 100%|███████████████████████████████████████████████████████| 100/100 [00:44<00:00,  2.26it/s]                                                       
 --------------------------------------------------------------------------------------------------------------                                                       
 VERBOSE: Gathering identifiers                                                    
 VERBOSE: Gathering VPN data                                                       
@@ -100,7 +100,7 @@ VERBOSE: Gathering Firewalls rules on the MX appliances
 VERBOSE: Gathering ACL and FW data took 1.1641 seconds to process                 
 VERBOSE: Creating site dictionary                                                 
 ==============================================================================================================                                                       
-Processing WDC: 100%|███████████████████████████████████████████████████████| 100/100 [11:23<00:00,  6.83s/it]                                                       
+Processing MD: 100%|███████████████████████████████████████████████████████| 100/100 [11:23<00:00,  6.83s/it]                                                       
 --------------------------------------------------------------------------------------------------------------                                                       
 VERBOSE: Gathering identifiers                                                    
 VERBOSE: Gathering VPN data                                                       
@@ -124,30 +124,7 @@ VERBOSE: Gathering ACL and FW data took 138.3256 seconds to process
 VERBOSE: Creating site dictionary                                                 
 ==============================================================================================================                                                       
 Processing AWS: 100%|███████████████████████████████████████████████████████| 100/100 [05:17<00:00,  3.17s/it]                                                       
---------------------------------------------------------------------------------------------------------------                                                       
-VERBOSE: Gathering identifiers                                                    
-VERBOSE: Gathering VPN data                                                       
-VERBOSE: Gathering VPN data took 0.6744 seconds to process                        
-VERBOSE: Gathering VLAN data from switch stacks                                   
-VERBOSE: No switch stacks in this network                                         
-VERBOSE: Gathering VLAN data from switches                                        
-VERBOSE: Gathering devices took 0.3191 seconds to process                         
-VERBOSE: Gathering VLAN data from MX security appliances                          
-VERBOSE: No VLANs exist on security appliance and or no security appliance exists 
-VERBOSE: Gathering VLAN data took 187.8790 seconds to process                     
-VERBOSE: Consolidating site's subnets into CIDR list                              
-VERBOSE: Gathering client data from the site's devices                            
-VERBOSE: Gathering device client data took 0.0003 seconds to process              
-VERBOSE: Gathering a sample of the network client data                            
-VERBOSE: Gathering network client data took 0.4057 seconds to process             
-VERBOSE: Gathering MS ACL and MX Firewall data                                    
-VERBOSE: Gathering ACL rules on the MS switches                                   
-VERBOSE: Gathering Firewalls rules on the MX appliances                           
-VERBOSE: Gathering ACL and FW data took 95.4927 seconds to process                
-VERBOSE: Creating site dictionary                                                 
-==============================================================================================================                                                       
-Processing Z3: 100%|████████████████████████████████████████████████████████| 100/100 [04:44<00:00,  2.84s/it]                                                       
---------------------------------------------------------------------------------------------------------------                                                       
+--------------------------------------------------------------------------------------------------------------                                     
 
 VERBOSE: Gathering all the preflight information took 1331.7198 seconds to process                                                                                   
 --------------------------------------------------------------------------------------------------------------                                                       
