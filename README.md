@@ -283,7 +283,7 @@ Once the script has converted the PCAP to a Pandas Dataframe, it will then save 
 ```
 adam@MD-PYCHARM-01:~/PycharmProjects/Meraki-Traffic-Analyzer$ python3 MTA.py -v \
 -f packet_capture.pcap \
---resolveDNS --DNSServers 10.160.34.249,10.160.34.250
+--resolveDNS --DNSServers 10.10.10.20,10.10.10.30
 
 VERBOSE: Converting the PCAP to CSV
 VERBOSE: Gathering Meraki variables
