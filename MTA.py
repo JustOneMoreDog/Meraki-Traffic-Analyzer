@@ -1539,14 +1539,14 @@ if __name__ == "__main__":
         orgID = organization['id']
     else:
         print("Please select an organization to work with:")
-        for x, orgs in organizations:
-            print("%d) %s" % (x, orgs['name']))
+        for x, org in enumerate(organizations):
+            print("%d) %s" % (x+1, org['name']))
         while True:
             choice = input("=> ")
-            if not is_int(choice) and int(choice) not in range(0, len(organizations) + 1):
-                print("Invalid Choice")
+            if not is_int(choice) and int(choice) not in range(1, len(organizations) + 1):
+                print("Invalid Choice %d" int(choice))
             else:
-                organization = organizations[int(choice)]
+                organization = organizations[int(choice)-1]
                 orgID = organization['id']
                 break
     networks = dashboard.organizations.getOrganizationNetworks(orgID)
