@@ -918,6 +918,8 @@ def get_sites(dashboard, organizationId, networks, get_clients=False):
             toc = time.perf_counter()
             printv(f"Gathering VPN data took {toc - tic:0.4f} seconds to process", sitesPBar)
             sitesPBar.update(10)
+        else:
+            sitesPBar.update(20)
 
         # VLANs
         if "switch" in network["productTypes"]:
@@ -979,6 +981,8 @@ def get_sites(dashboard, organizationId, networks, get_clients=False):
                         cidrList.append(vlan['subnet'])
                         vlanList.append(vlan)
             sitesPBar.update(2.5)
+        else:
+            sitesPBar.update(7.5)
 
         # Lastly we get any VLANs that might be on the MX
         if "appliance" in network["productTypes"]:
@@ -1000,6 +1004,8 @@ def get_sites(dashboard, organizationId, networks, get_clients=False):
             sitesPBar.update(2.5)
             toc = time.perf_counter()
             printv(f"Gathering VLAN data took {toc - tic:0.4f} seconds to process", sitesPBar)
+        else:
+            sitesPBar.update(2.5)
 
         # This can shave off a couple of iterations by allowing us to determine if an ip is even going to be in a site
         # Rather than going over 80 VLANs we instead go over 10 cidrs. Having to do 10 extra iterations is worth it
@@ -1073,6 +1079,8 @@ def get_sites(dashboard, organizationId, networks, get_clients=False):
             sitesPBar.update(20)
             toc = time.perf_counter()
             printv(f"Gathering ACL and FW data took {toc - tic:0.4f} seconds to process", sitesPBar)
+        else:
+            sitesPBar.update(30)    
 
         printv("Creating site dictionary", sitesPBar)
         site = {
