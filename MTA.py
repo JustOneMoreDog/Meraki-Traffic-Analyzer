@@ -23,6 +23,7 @@ from openpyxl import load_workbook
 import dns.resolver
 from dns.exception import DNSException
 import warnings
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # Verbosity
@@ -72,6 +73,7 @@ if not os.path.isdir(MERLOGDIR):
 # Creating Excel Directory
 if not os.path.isdir('excel'):
     os.mkdir('excel')
+
 
 # Controls verbose output
 # Thanks to this stack overflow post I am able to upgrade this function to handle tqdm progress bars
@@ -744,12 +746,22 @@ def get_rule_list_impact(source, destination, ruleList):
 
 
 def format_df_values_caller(chunk, networks=None):
+    # Let's say you have a VLAN that the people in HR use, 10.10.10.0/24
+    # These people are going to be talking out to the internet constantly
+    # If you want to reduce clutter you can change all the public IP-es talking to and from those VLANs to 1 network
+    # So instead of having 10.10.10.0/24 listed as talking to 100s of public IP-es
+    # it will instead be listed in the data as talking to 6.6.6.6/6
+    # For me I did not care if certain VLANs were talking to the internet only that they were in the first place
+    # Using the example above we would set ipes to [IPNetwork(10.10.10.0/24)]
+    # Maybe someday I will make this a command line argument but alas 24 hours in the day
+    ipes = None
     # We have to make this array like this because of how pandas .isin function works
     if ipes is not None:
         ipes = [str(ip) for network in networks for ip in list(network)]
     else:
         ipes = []
     return format_df_values(chunk, ipes)
+
 
 # See https://github.com/picnicsecurity/Meraki-Traffic-Analyzer#Tailoring-the-Code for an explaination on this code and its purpose
 def format_df_values(chunk, ipes):
@@ -765,7 +777,7 @@ def format_df_values(chunk, ipes):
         lambda x: IPNetwork('6.6.6.6/32') if not IPNetwork(x).is_private() else x
     )
     col = 'DstIP'
-    # Look...dont judge. This is just something you are going to have to accept and move on
+    # Keep moving
     chunk.loc[
         (chunk[col].isin(ipes)),
         'SrcIP'
@@ -905,98 +917,107 @@ def get_sites(dashboard, organizationId, networks, get_clients=False):
         sitesPBar.update(20)
 
         # VPN Subnets
-        tic = time.perf_counter()
-        printv("Gathering VPN data", sitesPBar)
-        peers = get_org_remote_vpn_participants(dashboard, organizationId, networkId)
-        sitesPBar.update(10)
-        vpnSubnets = [
-            IPNetwork(subnet['localSubnet'])
-            for subnet in dashboard.appliance.getNetworkApplianceVpnSiteToSiteVpn(networkId)['subnets']
-            if subnet['useVpn']
-        ]
-        toc = time.perf_counter()
-        printv(f"Gathering VPN data took {toc - tic:0.4f} seconds to process", sitesPBar)
-        sitesPBar.update(10)
+        if "appliance" in network["productTypes"]:
+            tic = time.perf_counter()
+            printv("Gathering VPN data", sitesPBar)
+            peers = get_org_remote_vpn_participants(dashboard, organizationId, networkId)
+            sitesPBar.update(10)
+            vpnSubnets = [
+                IPNetwork(subnet['localSubnet'])
+                for subnet in dashboard.appliance.getNetworkApplianceVpnSiteToSiteVpn(networkId)['subnets']
+                if subnet['useVpn']
+            ]
+            toc = time.perf_counter()
+            printv(f"Gathering VPN data took {toc - tic:0.4f} seconds to process", sitesPBar)
+            sitesPBar.update(10)
+        else:
+            sitesPBar.update(20)
 
         # VLANs
-        tic = time.perf_counter()
-        printv("Gathering VLAN data from switch stacks", sitesPBar)
-        vlanList = []
-        checkedSerials = []
-        cidrList = []
-        # Grabbing VLANs from any MS series switches starting with switch stacks
-        try:
-            for stack in dashboard.switch.getNetworkSwitchStacks(networkId):
-                for serial in stack['serials']:
-                    checkedSerials.append(serial)
-                for vlan in dashboard.switch.getNetworkSwitchStackRoutingInterfaces(networkId=networkId,
-                                                                                    switchStackId=stack['id']):
-                    vlan['subnet'] = IPNetwork(vlan['subnet'])
-                    if vlan['subnet'] in vpnSubnets:
-                        vlan['inVpn'] = True
-                    else:
-                        vlan['inVpn'] = False
-                    vlan['MS'] = True
-                    vlan['location'] = stack['name']
-                    cidrList.append(vlan['subnet'])
-                    vlanList.append(vlan)
-        except mer.exceptions.APIError as e:
-            # This error will be thrown when dealing with networks that do not have switch stacks
-            # In the context of my organization this is our AWS Virtual MX
-            printv("No switch stacks in this network", sitesPBar)
+        if "switch" in network["productTypes"]:
+            tic = time.perf_counter()
+            printv("Gathering VLAN data from switch stacks", sitesPBar)
+            vlanList = []
+            checkedSerials = []
+            cidrList = []
+            # Grabbing VLANs from any MS series switches starting with switch stacks
+            try:
+                for stack in dashboard.switch.getNetworkSwitchStacks(networkId):
+                    for serial in stack['serials']:
+                        checkedSerials.append(serial)
+                    for vlan in dashboard.switch.getNetworkSwitchStackRoutingInterfaces(networkId=networkId,
+                                                                                        switchStackId=stack['id']):
+                        vlan['subnet'] = IPNetwork(vlan['subnet'])
+                        if vlan['subnet'] in vpnSubnets:
+                            vlan['inVpn'] = True
+                        else:
+                            vlan['inVpn'] = False
+                        vlan['MS'] = True
+                        vlan['location'] = stack['name']
+                        cidrList.append(vlan['subnet'])
+                        vlanList.append(vlan)
+            except mer.exceptions.APIError as e:
+                # This error will be thrown when dealing with networks that do not have switch stacks
+                # In the context of my organization this is our AWS Virtual MX
+                printv("No switch stacks in this network", sitesPBar)
 
-        sitesPBar.update(2.5)
-        # Next we check for any layer 3 interfaces on switches that are not in stacks
+            sitesPBar.update(2.5)
+            # Next we check for any layer 3 interfaces on switches that are not in stacks
 
-        # Gathering the devices
-        ttic = time.perf_counter()
-        printv("Gathering VLAN data from switches", sitesPBar)
-        devices = [device for device in dashboard.networks.getNetworkDevices(networkId=networkId)
-                   if 'MS' in device['model'] or 'MR' in device['model']]
-        for device in devices:
-            if 'name' not in device:
-                device['name'] = device['mac']
-        devices.sort(key=lambda x: x['name'], reverse=True)
-        sitesPBar.update(2.5)
-        ttoc = time.perf_counter()
-        printv(f"Gathering devices took {ttoc - ttic:0.4f} seconds to process", sitesPBar)
+            # Gathering the devices
+            ttic = time.perf_counter()
+            printv("Gathering VLAN data from switches", sitesPBar)
+            devices = [device for device in dashboard.networks.getNetworkDevices(networkId=networkId)
+                       if 'MS' in device['model'] or 'MR' in device['model']]
+            for device in devices:
+                if 'name' not in device:
+                    device['name'] = device['mac']
+            devices.sort(key=lambda x: x['name'], reverse=True)
+            sitesPBar.update(2.5)
+            ttoc = time.perf_counter()
+            printv(f"Gathering devices took {ttoc - ttic:0.4f} seconds to process", sitesPBar)
 
-        # Checking for layer 3 interfaces
-        for device in devices:
-            if device['serial'] in checkedSerials or 'MS' not in device['model']:
-                continue
-            else:
-                for vlan in dashboard.switch.getDeviceSwitchRoutingInterfaces(device['serial']):
-                    vlan['subnet'] = IPNetwork(vlan['subnet'])
-                    if vlan['subnet'] in vpnSubnets:
-                        vlan['inVpn'] = True
-                    else:
-                        vlan['inVpn'] = False
-                    vlan['MS'] = True
-                    vlan['location'] = device['name']
-                    cidrList.append(vlan['subnet'])
-                    vlanList.append(vlan)
-        sitesPBar.update(2.5)
+            # Checking for layer 3 interfaces
+            for device in devices:
+                if device['serial'] in checkedSerials or 'MS' not in device['model']:
+                    continue
+                else:
+                    for vlan in dashboard.switch.getDeviceSwitchRoutingInterfaces(device['serial']):
+                        vlan['subnet'] = IPNetwork(vlan['subnet'])
+                        if vlan['subnet'] in vpnSubnets:
+                            vlan['inVpn'] = True
+                        else:
+                            vlan['inVpn'] = False
+                        vlan['MS'] = True
+                        vlan['location'] = device['name']
+                        cidrList.append(vlan['subnet'])
+                        vlanList.append(vlan)
+            sitesPBar.update(2.5)
+        else:
+            sitesPBar.update(7.5)
 
         # Lastly we get any VLANs that might be on the MX
-        printv("Gathering VLAN data from MX security appliances", sitesPBar)
-        try:
-            for vlan in dashboard.appliance.getNetworkApplianceVlans(networkId):
-                vlan['vlanId'] = vlan['id']
-                vlan['subnet'] = IPNetwork(vlan['subnet'])
-                if vlan['subnet'] in vpnSubnets:
-                    vlan['inVpn'] = True
-                else:
-                    vlan['inVpn'] = False
-                vlan['MS'] = False
-                vlan['location'] = 'Appliance'
-                cidrList.append(vlan['subnet'])
-                vlanList.append(vlan)
-        except mer.exceptions.APIError:
-            printv("No VLANs exist on security appliance and or no security appliance exists", sitesPBar)
-        sitesPBar.update(2.5)
-        toc = time.perf_counter()
-        printv(f"Gathering VLAN data took {toc - tic:0.4f} seconds to process", sitesPBar)
+        if "appliance" in network["productTypes"]:
+            printv("Gathering VLAN data from MX security appliances", sitesPBar)
+            try:
+                for vlan in dashboard.appliance.getNetworkApplianceVlans(networkId):
+                    vlan['vlanId'] = vlan['id']
+                    vlan['subnet'] = IPNetwork(vlan['subnet'])
+                    if vlan['subnet'] in vpnSubnets:
+                        vlan['inVpn'] = True
+                    else:
+                        vlan['inVpn'] = False
+                    vlan['MS'] = False
+                    vlan['location'] = 'Appliance'
+                    cidrList.append(vlan['subnet'])
+                    vlanList.append(vlan)
+            except mer.exceptions.APIError:
+                printv("No VLANs exist on security appliance and or no security appliance exists", sitesPBar)
+            sitesPBar.update(2.5)
+            toc = time.perf_counter()
+            printv(f"Gathering VLAN data took {toc - tic:0.4f} seconds to process", sitesPBar)
+        else:
+            sitesPBar.update(2.5)
 
         # This can shave off a couple of iterations by allowing us to determine if an ip is even going to be in a site
         # Rather than going over 80 VLANs we instead go over 10 cidrs. Having to do 10 extra iterations is worth it
@@ -1055,20 +1076,23 @@ def get_sites(dashboard, organizationId, networks, get_clients=False):
         # I have been getting random 502 Bad Gateway errors with this api call which is unfortunate
         # This would be the much more ideal way of getting the clients on the network
         # The 'clients' property I added on to each device is messy at best but until this works its our only option
-        tic = time.perf_counter()
-        printv("Gathering a sample of the network client data", sitesPBar)
-        clients = dashboard.networks.getNetworkClients(networkId)
-        sitesPBar.update(10)
-        toc = time.perf_counter()
-        printv(f"Gathering network client data took {toc - tic:0.4f} seconds to process", sitesPBar)
+        if "appliance" in network["productTypes"] or "switch" in network["productTypes"]:
+            tic = time.perf_counter()
+            printv("Gathering a sample of the network client data", sitesPBar)
+            clients = dashboard.networks.getNetworkClients(networkId)
+            sitesPBar.update(10)
+            toc = time.perf_counter()
+            printv(f"Gathering network client data took {toc - tic:0.4f} seconds to process", sitesPBar)
 
-        # Getting ACL and Firewall Rules
-        tic = time.perf_counter()
-        printv("Gathering MS ACL and MX Firewall data", sitesPBar)
-        msACL, mxFW = get_acls(dashboard, networkId, sitesPBar)
-        sitesPBar.update(20)
-        toc = time.perf_counter()
-        printv(f"Gathering ACL and FW data took {toc - tic:0.4f} seconds to process", sitesPBar)
+            # Getting ACL and Firewall Rules
+            tic = time.perf_counter()
+            printv("Gathering MS ACL and MX Firewall data", sitesPBar)
+            msACL, mxFW = get_acls(dashboard, networkId, sitesPBar)
+            sitesPBar.update(20)
+            toc = time.perf_counter()
+            printv(f"Gathering ACL and FW data took {toc - tic:0.4f} seconds to process", sitesPBar)
+        else:
+            sitesPBar.update(30)
 
         printv("Creating site dictionary", sitesPBar)
         site = {
@@ -1089,7 +1113,7 @@ def get_sites(dashboard, organizationId, networks, get_clients=False):
     return sites
 
 
-# excempt_ipes is variable that will get added in the next version. If you have hosts in your network that you are well aware of, like Naigos or Splunk, 
+# excempt_ipes is variable that will get added in the next version. If you have hosts in your network that you are well aware of, like Naigos or Splunk,
 # that make a lot of noise, you can filter them out automatically with this variable
 def enrich_traffic_data(filename, columns, pretty=False, DNS=False, excempt_ipes=[]):
     ttic = time.perf_counter()
@@ -1102,7 +1126,6 @@ def enrich_traffic_data(filename, columns, pretty=False, DNS=False, excempt_ipes
     }
     if 'Application' in columns:
         columnMap['Application'] = 'PortInfo'
-
 
     ###                    ###
     ### DATAFRAME CREATION ###
@@ -1540,13 +1563,13 @@ if __name__ == "__main__":
     else:
         print("Please select an organization to work with:")
         for x, org in enumerate(organizations):
-            print("%d) %s" % (x+1, org['name']))
+            print("%d) %s" % (x + 1, org['name']))
         while True:
             choice = input("=> ")
             if not is_int(choice) and int(choice) not in range(1, len(organizations) + 1):
-                print("Invalid Choice %d" int(choice))
+                print("Invalid Choice %d", int(choice))
             else:
-                organization = organizations[int(choice)-1]
+                organization = organizations[int(choice) - 1]
                 orgID = organization['id']
                 break
     networks = dashboard.organizations.getOrganizationNetworks(orgID)
