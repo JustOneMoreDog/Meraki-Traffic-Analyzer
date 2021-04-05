@@ -11,7 +11,7 @@ git clone https://github.com/picnicsecurity/Meraki-Traffic-Analyzer.git
 cd Meraki-Traffic-Analyzer
 python3 -m pip install -r requirements.txt
 python3 MTA.py -v -f your_csv_data.csv --PrintTopData
-python3 MTA.py -v -f your_pcap_data.csv --PrintTopData
+python3 MTA.py -v -f your_pcap_data.pcap --PrintTopData
 ```
 
 ## Contents
